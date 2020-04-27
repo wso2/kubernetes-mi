@@ -1,0 +1,165 @@
+# Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "micro-integrator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "micro-integrator.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.wso2.deployment.wso2microIntegrator.replicas }}
+  minReadySeconds: {{ .Values.wso2.deployment.wso2microIntegrator.minReadySeconds }}
+  strategy:
+    rollingUpdate:
+      maxSurge: {{ .Values.wso2.deployment.wso2microIntegrator.strategy.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.wso2.deployment.wso2microIntegrator.strategy.rollingUpdate.maxUnavailable }}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      deployment: {{ template "micro-integrator.fullname" . }}
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        deployment: {{ template "micro-integrator.fullname" . }}
+        app: {{ .Release.Name }}
+    spec:
+      {{- if .Values.wso2.centralizedLogging.enabled }}
+      initContainers:
+        - name: init-logstash-plugins-install
+          image: "docker.elastic.co/logstash/logstash:{{ .Values.wso2.centralizedLogging.logstash.imageTag }}"
+          command:
+            - /bin/sh
+            - "-c"
+            - |
+              set -e
+              ./bin/logstash-plugin install logstash-codec-multiline logstash-filter-grok
+          volumeMounts:
+            - name: shared-plugins
+              mountPath: /usr/share/logstash/plugins/
+        - name: init-elasticsearch
+          image: busybox:1.31
+          command: ['sh', '-c', 'echo -e "Checking for the availability of Elasticsearch Server deployment"; while ! nc -z {{ .Values.wso2.centralizedLogging.logstash.elasticsearch.host }} 9200; do sleep 1; printf "-"; done; echo -e "  >> Elasticsearch server has started";']
+      {{- end }}
+      containers:
+        - name: wso2micro-integrator
+          {{- if .Values.wso2.deployment.wso2microIntegrator.dockerRegistry }}
+          image: {{ .Values.wso2.deployment.wso2microIntegrator.dockerRegistry }}/{{ .Values.wso2.deployment.wso2microIntegrator.imageName }}
+          {{- $tag := .Values.wso2.deployment.wso2microIntegrator.imageTag }}
+          {{- if not (eq $tag "") }}{{- printf ":%s" $tag -}}{{- end }}
+          {{- else if or (eq .Values.wso2.subscription.username "") (eq .Values.wso2.subscription.password "") }}
+          image: "wso2/{{ .Values.wso2.deployment.wso2microIntegrator.imageName }}:{{ .Values.wso2.deployment.wso2microIntegrator.imageTag }}"
+          {{- else }}
+          image: "docker.wso2.com/{{ .Values.wso2.deployment.wso2microIntegrator.imageName }}:{{ .Values.wso2.deployment.wso2microIntegrator.imageTag }}"
+          {{- end }}
+          command:
+            - /bin/sh
+            - "-c"
+            - |
+              set -e
+              ./docker-entrypoint.sh
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - nc -z localhost 8290
+            initialDelaySeconds: {{ .Values.wso2.deployment.wso2microIntegrator.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.wso2.deployment.wso2microIntegrator.livenessProbe.periodSeconds }}
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - nc -z localhost 8290
+            initialDelaySeconds: {{ .Values.wso2.deployment.wso2microIntegrator.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.wso2.deployment.wso2microIntegrator.readinessProbe.periodSeconds }}
+          resources:
+            requests:
+              memory: {{ .Values.wso2.deployment.wso2microIntegrator.resources.requests.memory }}
+              cpu: {{ .Values.wso2.deployment.wso2microIntegrator.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.wso2.deployment.wso2microIntegrator.resources.limits.memory }}
+              cpu: {{ .Values.wso2.deployment.wso2microIntegrator.resources.limits.cpu }}
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 802
+          ports:
+            - containerPort: 8290
+              protocol: TCP
+          {{- if .Values.wso2.deployment.wso2microIntegrator.envs }}
+          env:
+            {{- range $key, $val := .Values.wso2.deployment.wso2microIntegrator.envs }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+          {{- end }}
+          {{- end }}
+        {{- if .Values.wso2.centralizedLogging.enabled }}
+          volumeMounts:
+            - name: shared-logs
+              mountPath: /home/wso2carbon/wso2mi-1.2.0/repository/logs
+        - name: wso2micro-integrator-logstash
+          image: "docker.elastic.co/logstash/logstash:{{ .Values.wso2.centralizedLogging.logstash.imageTag }}"
+          volumeMounts:
+            - name: shared-logs
+              mountPath: /usr/share/logstash/wso2-logs/
+            - name: logstash-yml
+              mountPath: /usr/share/logstash/config/logstash.yml
+              subPath: logstash.yml
+            - name: logstash-conf
+              mountPath: /usr/share/logstash/pipeline/logstash.conf
+              subPath: logstash.conf
+            - name: shared-plugins
+              mountPath: /usr/share/logstash/plugins/
+          env:
+            - name: NODE_ID
+              value: {{ .Release.Name }}-wso2micro-integrator-node
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: ELASTICSEARCH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: logstash-elasticsearch-creds
+                  key: username
+            - name: ELASTICSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: logstash-elasticsearch-creds
+                  key: password
+            - name: ELASTICSEARCH_HOST
+              value: {{ .Values.wso2.centralizedLogging.logstash.elasticsearch.host }}
+        {{- end }}
+      {{- if and (not (eq .Values.wso2.subscription.username "")) (not (eq .Values.wso2.subscription.password "")) }}
+      imagePullSecrets:
+        - name: wso2micro-integrator-deployment-creds
+      {{- end }}
+      {{- if .Values.wso2.centralizedLogging.enabled }}
+      volumes:
+        - name: shared-logs
+          emptyDir: {}
+        - name: logstash-yml
+          configMap:
+            name: logstash-yml
+        - name: logstash-conf
+          configMap:
+            name: logstash-conf
+        - name: shared-plugins
+          emptyDir: {}
+        - name: logstash-elasticsearch-creds
+          secret:
+            secretName: logstash-elasticsearch-creds
+      {{- end }}
