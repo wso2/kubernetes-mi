@@ -1,0 +1,16 @@
+Thank you for installing WSO2 Micro Integrator.
+
+Please follow these steps to assess Micro Integrator.
+
+1. Obtain the external IP (`EXTERNAL-IP`) of the Ingress resources by listing down the Kubernetes Ingresses.
+
+  kubectl get ing -n {{ .Release.Namespace }}
+
+    NAME                       HOSTS                     ADDRESS        PORTS     AGE
+    {{ include "micro-integrator.fullname" . }}       {{ .Values.wso2.ingress.host | default .Release.Name | quote }}       <EXTERNAL-IP>  80, 443   3m
+
+2. Add the above host as an entry in /etc/hosts file as follows:
+
+    <EXTERNAL-IP>	{{ .Values.wso2.ingress.host | default .Release.Name | quote }}
+
+Please refer the official documentation at https://ei.docs.wso2.com/en/latest/micro-integrator/overview/introduction/ for additional information on WSO2 Micro Integrator.
