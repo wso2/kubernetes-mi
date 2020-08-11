@@ -15,25 +15,21 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ include "micro-integrator.fullname" . }}
+  name: {{ include "micro-integrator.fullname" . }}-mgt
   namespace : {{ .Release.Namespace }}
-{{- if .Values.wso2.ingress.annotations }}
+{{- if .Values.wso2.ingress.mgt.annotations }}
   annotations:
-{{ toYaml .Values.wso2.ingress.annotations | indent 4 }}
+{{ toYaml .Values.wso2.ingress.mgt.annotations | indent 4 }}
 {{- end }}
 spec:
   tls:
     - hosts:
-        - {{ .Values.wso2.ingress.host | default .Release.Name | quote }}
+        - {{ .Values.wso2.ingress.mgt.hostname  | quote }}
   rules:
-    - host: {{ .Values.wso2.ingress.host | default .Release.Name | quote }}
+    - host: {{ .Values.wso2.ingress.mgt.hostname | quote }}
       http:
         paths:
           - path: /
             backend:
               serviceName: {{ include "micro-integrator.fullname" . }}
-              servicePort: 8290
-          - path: /healthz
-            backend:
-              serviceName: {{ include "micro-integrator.fullname" . }}
-              servicePort: 9201
+              servicePort: 9164
