@@ -25,8 +25,6 @@ wso2:
       imageTag: "1.2.0"
       # Number of deployment replicas
       replicas: 1
-      # Minimum number of seconds for which a newly created pod should be ready without any of its containers crashing, for it to be considered available.
-      minReadySeconds: 30
       strategy:
         rollingUpdate:
           # The maximum number of pods that can be scheduled above the desired number of pods.
