@@ -33,3 +33,7 @@ spec:
             backend:
               serviceName: {{ include "micro-integrator.fullname" . }}
               servicePort: 8290
+          - path: /healthz
+            backend:
+              serviceName: {{ include "micro-integrator.fullname" . }}
+              servicePort: 9201
