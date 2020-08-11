@@ -59,8 +59,8 @@ kubectl get ing -n <NAMESPACE>
 
 ```
 NAME                                     HOSTS                ADDRESS        PORTS     AGE
-<RELEASE_NAME>-wso2micro-integrators-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
-<RELEASE_NAME>-wso2micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-micro-integrator-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
 ```
 
 b. Add the above host as an entry in /etc/hosts file as follows:
@@ -116,7 +116,6 @@ If you do not have active WSO2 subscription do not change the parameters `wso2.d
 | `wso2.deployment.wso2microIntegrator.imageName`                                     | Image name for micro-integrator node                                                          | ""                          |
 | `wso2.deployment.wso2microIntegrator.imageTag`                                      | Image tag for micro-integrator node                                                           | ""                          |
 | `wso2.deployment.wso2microIntegrator.replicas`                                      | Number of replicas for micro-integrator node                                                  | 1                           |
-| `wso2.deployment.wso2microIntegrator.minReadySeconds`                               | Refer to [doc](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deploymentspec-v1-apps)| 1  75                        |
 | `wso2.deployment.wso2microIntegrator.strategy.rollingUpdate.maxSurge`               | Refer to [doc](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deploymentstrategy-v1-apps) | 1                           |
 | `wso2.deployment.wso2microIntegrator.strategy.rollingUpdate.maxUnavailable`         | Refer to [doc](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deploymentstrategy-v1-apps) | 0                           |
 | `wso2.deployment.wso2microIntegrator.livenessProbe.initialDelaySeconds`             | Initial delay for the live-ness probe for micro-integrator node                               | 40                           |
@@ -156,8 +155,8 @@ kubectl get ing -n <NAMESPACE>
 
 ```
 NAME                                                HOSTS                ADDRESS        PORTS     AGE
-<RELEASE_NAME>-wso2micro-integrators-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
-<RELEASE_NAME>-wso2micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-micro-integrator-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
 ```
 
 b. Add the above host as an entry in /etc/hosts file as follows:
