@@ -31,6 +31,10 @@ spec:
       targetPort: 9201
       protocol: TCP
       name: metrics
+    - port: 9164
+      targetPort: 9164
+      protocol: TCP
+      name: management
   selector:
     deployment: {{ template "micro-integrator.fullname" . }}
     app: {{ .Release.Name }}
