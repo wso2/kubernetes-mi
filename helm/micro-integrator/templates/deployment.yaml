@@ -101,6 +101,8 @@ spec:
               protocol: TCP
             - containerPort: 9201
               protocol: TCP
+            - containerPort: 9164
+              protocol: TCP
           {{- if .Values.wso2.deployment.wso2microIntegrator.envs }}
           env:
             {{- range $key, $val := .Values.wso2.deployment.wso2microIntegrator.envs }}

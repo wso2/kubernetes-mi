@@ -59,13 +59,15 @@ kubectl get ing -n <NAMESPACE>
 
 ```
 NAME                                     HOSTS                ADDRESS        PORTS     AGE
-<RELEASE_NAME>-wso2micro-integrator      <RELEASE_NAME>       <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-wso2micro-integrators-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-wso2micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
 ```
 
 b. Add the above host as an entry in /etc/hosts file as follows:
 
 ```
-<EXTERNAL-IP>	<RELEASE_NAME>
+<EXTERNAL-IP>	mi.wso2.com 
+<EXTERNAL-IP>	mi.mgt.wso2.com 
 ```
 ### Install Chart From Source
 >In the context of this document, <br>
@@ -127,8 +129,10 @@ If you do not have active WSO2 subscription do not change the parameters `wso2.d
 | `wso2.deployment.wso2microIntegrator.resources.limits.memory`                       | The maximum amount of memory that should be allocated for a Pod                           | 2Gi                          |
 | `wso2.deployment.wso2microIntegrator.resources.limits.cpu`                          | The maximum amount of CPU that should be allocated for a Pod                              | 2000m                        |
 | `wso2.deployment.wso2microIntegrator.envs                `                          | The List of environment variables that should configured for a Pod                              | 2000m                        |
-| `wso2.ingress.host`                                                                 | The Host name for the Micro integrator ingress                                            | Release name                        |
-| `wso2.ingress.annotations`                                                          | Annotations for the Micro Integrator Ingress                                              | Nginx ingress annotations                      |
+| `wso2.ingress.services.hostname`                                                        | The Host name for the Micro integrator Services ingress                                   | mi.wso2.com                        |
+| `wso2.ingress.services.annotations`                                                 | Annotations for the Micro Integrator Services Ingress                                     | Nginx ingress annotations                      |
+| `wso2.ingress.mgt.hostnname`                                                             | The Host name for the Micro integrator Management ingress                                 | mi.mgt.wso2.com                       |
+| `wso2.ingress.mgt.annotations`                                                      | Annotations for the Micro Integrator Management Ingress                                   | Nginx ingress annotations                      |
 
 ##### 3. Deploy WSO2 Micro Integrator.
 
@@ -151,14 +155,16 @@ kubectl get ing -n <NAMESPACE>
 ```
 
 ```
-NAME                                     HOSTS                ADDRESS        PORTS     AGE
-<RELEASE_NAME>-wso2micro-integrator      <RELEASE_NAME>       <EXTERNAL-IP>  80, 443   3m
+NAME                                                HOSTS                ADDRESS        PORTS     AGE
+<RELEASE_NAME>-wso2micro-integrators-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-wso2micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
 ```
 
 b. Add the above host as an entry in /etc/hosts file as follows:
 
 ```
-<EXTERNAL-IP>	<RELEASE_NAME>
+<EXTERNAL-IP>	mi.wso2.com 
+<EXTERNAL-IP>	mi.mgt.wso2.com 
 ```
 
 ## Enabling Centralized Logging
