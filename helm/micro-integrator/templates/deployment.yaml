@@ -20,7 +20,6 @@ metadata:
 {{ include "micro-integrator.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.wso2.deployment.wso2microIntegrator.replicas }}
-  minReadySeconds: {{ .Values.wso2.deployment.wso2microIntegrator.minReadySeconds }}
   strategy:
     rollingUpdate:
       maxSurge: {{ .Values.wso2.deployment.wso2microIntegrator.strategy.rollingUpdate.maxSurge }}
