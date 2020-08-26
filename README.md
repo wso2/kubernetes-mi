@@ -5,7 +5,7 @@ This project contains the Helm resources required to deploy WSO2 Micro Integrato
 
 In order to deploy Helm resources, follow the **Quick Start Guide** given below:
 
-* [A deployment of WSO2 API Micro Integrator](helm/micro-integrator/README.md)
+* [A deployment of WSO2 Micro Integrator](helm/micro-integrator/README.md)
 
 ## Reporting issues
 
