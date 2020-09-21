@@ -63,12 +63,10 @@ spec:
           {{- else }}
           image: "docker.wso2.com/{{ .Values.wso2.deployment.wso2microIntegrator.imageName }}:{{ .Values.wso2.deployment.wso2microIntegrator.imageTag }}"
           {{- end }}
-          command:
-            - /bin/sh
-            - "-c"
-            - |
-              set -e
-              ./docker-entrypoint.sh
+          {{- if .Values.wso2.deployment.wso2microIntegrator.synapseTest.enabled }}
+          args:
+            - "-DsynapseTest=true"
+          {{- end }}
           livenessProbe:
             exec:
               command:
@@ -102,6 +100,10 @@ spec:
               protocol: TCP
             - containerPort: 9164
               protocol: TCP
+          {{- if .Values.wso2.deployment.wso2microIntegrator.synapseTest.enabled }}
+            - containerPort: 9008
+              protocol: TCP
+          {{- end }}
           {{- if .Values.wso2.deployment.wso2microIntegrator.envs }}
           env:
             {{- range $key, $val := .Values.wso2.deployment.wso2microIntegrator.envs }}
