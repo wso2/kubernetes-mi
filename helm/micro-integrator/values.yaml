@@ -58,6 +58,9 @@ wso2:
       # Environment variables for the Micro integrator deployment.
       envs:
       #  ENV_NAME: ENV_VALUE
+      # Configure synapse testing.
+      synapseTest:
+        enabled: false
   # Configure Ingress for the Micro integrator deployment.
   ingress:
     # Configure services ingress
