@@ -35,6 +35,12 @@ spec:
       targetPort: 9164
       protocol: TCP
       name: management
+    {{- if .Values.wso2.deployment.wso2microIntegrator.synapseTest.enabled }}
+    - port: 9008
+      targetPort: 9008
+      protocol: TCP
+      name: synapse-test
+    {{- end}}
   selector:
     deployment: {{ template "micro-integrator.fullname" . }}
     app: {{ .Release.Name }}
