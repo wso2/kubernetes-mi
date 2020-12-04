@@ -55,3 +55,20 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+
+{{- define "image" }}
+{{- $imageName := .deployment.imageName }}
+{{- $imageTag := .deployment.imageTag | default "" }}
+{{- if or (eq .Values.wso2.subscription.username "") (eq .Values.wso2.subscription.password "") -}}
+{{- $dockerRegistry := .deployment.dockerRegistry | default "wso2" }}
+image: {{ $dockerRegistry }}/{{ $imageName }}{{- if not (eq $imageTag "") }}{{- printf ":%s" $imageTag -}}{{- end }}
+{{- else }}
+{{- $dockerRegistry := .deployment.dockerRegistry | default "docker.wso2.com" }}
+{{- $parts := len (split "." $imageTag) }}
+{{- if eq $parts 3 }}
+image: {{ $dockerRegistry }}/{{ $imageName }}{{- if not (eq $imageTag "") }}:{{ $imageTag }}.0{{- end }}
+{{- else }}
+image: {{ $dockerRegistry }}/{{ $imageName }}{{- if not (eq $imageTag "") }}:{{ $imageTag }}{{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
