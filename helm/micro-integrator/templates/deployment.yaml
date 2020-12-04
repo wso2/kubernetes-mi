@@ -54,15 +54,7 @@ spec:
       {{- end }}
       containers:
         - name: wso2micro-integrator
-          {{- if .Values.wso2.deployment.wso2microIntegrator.dockerRegistry }}
-          image: {{ .Values.wso2.deployment.wso2microIntegrator.dockerRegistry }}/{{ .Values.wso2.deployment.wso2microIntegrator.imageName }}
-          {{- $tag := .Values.wso2.deployment.wso2microIntegrator.imageTag }}
-          {{- if not (eq $tag "") }}{{- printf ":%s" $tag -}}{{- end }}
-          {{- else if or (eq .Values.wso2.subscription.username "") (eq .Values.wso2.subscription.password "") }}
-          image: "wso2/{{ .Values.wso2.deployment.wso2microIntegrator.imageName }}:{{ .Values.wso2.deployment.wso2microIntegrator.imageTag }}"
-          {{- else }}
-          image: "docker.wso2.com/{{ .Values.wso2.deployment.wso2microIntegrator.imageName }}:{{ .Values.wso2.deployment.wso2microIntegrator.imageTag }}"
-          {{- end }}
+{{- include "image" (dict "Values" .Values "deployment" .Values.wso2.deployment.wso2microIntegrator) | indent 10 }}
           {{- if .Values.wso2.deployment.wso2microIntegrator.synapseTest.enabled }}
           args:
             - "-DsynapseTest=true"
