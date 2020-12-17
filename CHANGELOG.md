@@ -3,6 +3,12 @@ All notable changes to this project `1.2.x` per each release will be documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [v1.2.0.4] - 2020-12-17
+
+### Changed
+
+- Fix image name and tag generation to use custom registry (refer [issue](https://github.com/wso2/kubernetes-mi/issues/33)).
+
 ## [v1.2.0.3] - 2020-09-22
 
 ### Environments
@@ -31,5 +37,6 @@ For detailed information on the tasks carried out during this release, please se
 ](https://github.com/wso2/kubernetes-mi/milestone/1)
 
 
+[v1.2.0.4]: https://github.com/wso2/kubernetes-mi/compare/v1.2.0.3...v1.2.0.4
 [v1.2.0.3]: https://github.com/wso2/kubernetes-mi/compare/v1.2.0.2...v1.2.0.3
 [v1.2.0.2]: https://github.com/wso2/kubernetes-mi/compare/v1.2.0.1...v1.2.0.2
