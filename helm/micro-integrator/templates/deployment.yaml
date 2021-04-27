@@ -68,11 +68,9 @@ spec:
             initialDelaySeconds: {{ .Values.wso2.deployment.wso2microIntegrator.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.wso2.deployment.wso2microIntegrator.livenessProbe.periodSeconds }}
           readinessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - nc -z localhost 8290
+            httpGet:
+              path: /healthz
+              port: 9201
             initialDelaySeconds: {{ .Values.wso2.deployment.wso2microIntegrator.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.wso2.deployment.wso2microIntegrator.readinessProbe.periodSeconds }}
           resources:

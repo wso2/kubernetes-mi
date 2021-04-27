@@ -34,12 +34,12 @@ deployment patterns are compatible with NGINX Ingress Controller Git release [`n
 [Option 1] Deploy using Docker images from DockerHub.
 
 ```
-helm install --name <RELEASE_NAME> wso2/micro-integrator --version 1.2.0-5 --namespace <NAMESPACE>
+helm install --name <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE>
 ```
 
 [Option 2] Deploy WSO2 Micro Integrator  using Docker images from WSO2 Private Docker Registry.
 ```
-helm install --name <RELEASE_NAME> wso2/micro-integrator --version 1.2.0-5 --namespace <NAMESPACE> --set wso2.subscription.username=<SUBSCRIPTION_USERNAME> --set wso2.subscription.password=<SUBSCRIPTION_PASSWORD>
+helm install --name <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE> --set wso2.subscription.username=<SUBSCRIPTION_USERNAME> --set wso2.subscription.password=<SUBSCRIPTION_PASSWORD>
 ```
 **Note:**
 
