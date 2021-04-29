@@ -104,7 +104,7 @@ spec:
         {{- if .Values.wso2.centralizedLogging.enabled }}
           volumeMounts:
             - name: shared-logs
-              mountPath: /home/wso2carbon/wso2mi-1.2.0/repository/logs
+              mountPath: /home/wso2carbon/wso2mi-4.0.0/repository/logs
         - name: wso2micro-integrator-logstash
           image: "docker.elastic.co/logstash/logstash:{{ .Values.wso2.centralizedLogging.logstash.imageTag }}"
           volumeMounts:
