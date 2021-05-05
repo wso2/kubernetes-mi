@@ -58,16 +58,16 @@ kubectl get ing -n <NAMESPACE>
 ```
 
 ```
-NAME                                     HOSTS                ADDRESS        PORTS     AGE
-<RELEASE_NAME>-micro-integrator-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
-<RELEASE_NAME>-micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
+NAME                                                 HOSTS                      ADDRESS        PORTS     AGE
+<RELEASE_NAME>-micro-integrator-service-ingress      mi.wso2.com                <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-micro-integrator-management-ingress   management.mi.wso2.com     <EXTERNAL-IP>  80, 443   3m
 ```
 
 b. Add the above host as an entry in /etc/hosts file as follows:
 
 ```
 <EXTERNAL-IP>	mi.wso2.com 
-<EXTERNAL-IP>	mi.mgt.wso2.com 
+<EXTERNAL-IP>	management.mi.wso2.com 
 ```
 ### Install Chart From Source
 >In the context of this document, <br>
@@ -98,16 +98,6 @@ b. Open the `<HELM_HOME>/values.yaml` and provide the following values.
 
 If you do not have active WSO2 subscription do not change the parameters `wso2.deployment.username`, `wso2.deployment.password`. 
 
-###### Centralized Logging Configurations
-
-| Parameter                                                                   | Description                                                                               | Default Value               |
-|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------|
-| `wso2.centralizedLogging.enabled`                                           | Enable Centralized logging for WSO2 components                                            | true                        |                                                                                         |                             |    
-| `wso2.centralizedLogging.logstash.imageTag`                                 | Logstash Sidecar container image tag                                                      | 7.2.0                       |  
-| `wso2.centralizedLogging.logstash.elasticsearch.host    `                   | Elasticsearch endpoint                                                                    | elastic                     |  
-| `wso2.centralizedLogging.logstash.elasticsearch.username`                   | Elasticsearch username                                                                    | elastic                     |  
-| `wso2.centralizedLogging.logstash.elasticsearch.password`                   | Elasticsearch password                                                                    | changeme                    |  
-
 ###### Micro Integrator Deployment Configurations
 
 | Parameter                                                                   | Description                                                                               | Default Value               |
@@ -129,16 +119,35 @@ If you do not have active WSO2 subscription do not change the parameters `wso2.d
 | `wso2.deployment.wso2microIntegrator.resources.limits.cpu`                          | The maximum amount of CPU that should be allocated for a Pod                              | 2000m                        |
 | `wso2.deployment.wso2microIntegrator.envs                `                          | The List of environment variables that should configured for a Pod                              | 2000m                        |
 | `wso2.deployment.wso2microIntegrator.synapseTest.enabled                `           | Enable Synapse testing                                                                 | false                        |
-| `wso2.ingress.services.hostname`                                                        | The Host name for the Micro integrator Services ingress                                   | mi.wso2.com                        |
+| `wso2.ingress.services.hostname`                                                    | The Host name for the Micro integrator Services ingress                                   | mi.wso2.com                        |
 | `wso2.ingress.services.annotations`                                                 | Annotations for the Micro Integrator Services Ingress                                     | Nginx ingress annotations                      |
-| `wso2.ingress.mgt.hostnname`                                                             | The Host name for the Micro integrator Management ingress                                 | mi.mgt.wso2.com                       |
-| `wso2.ingress.mgt.annotations`                                                      | Annotations for the Micro Integrator Management Ingress                                   | Nginx ingress annotations                      |
+| `wso2.ingress.management.hostnname`                                                 | The Host name for the Micro integrator Management ingress                                 | management.mi.wso2.com                       |
+| `wso2.ingress.management.annotations`                                               | Annotations for the Micro Integrator Management Ingress                                   | Nginx ingress annotations                      |
+
+###### Centralized Logging Configurations
+
+| Parameter                                                                   | Description                                                                               | Default Value               |
+|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------|
+| `wso2.centralizedLogging.enabled`                                           | Enable Centralized logging for WSO2 components                                            | true                        |                                                                                         |                             |    
+| `wso2.centralizedLogging.logstash.imageTag`                                 | Logstash Sidecar container image tag                                                      | 7.2.0                       |  
+| `wso2.centralizedLogging.logstash.elasticsearch.host    `                   | Elasticsearch endpoint                                                                    | elastic                     |  
+| `wso2.centralizedLogging.logstash.elasticsearch.username`                   | Elasticsearch username                                                                    | elastic                     |  
+| `wso2.centralizedLogging.logstash.elasticsearch.password`                   | Elasticsearch password                                                                    | changeme                    |  
+
 
 ##### 3. Deploy WSO2 Micro Integrator.
 
-```
-helm install --name <RELEASE_NAME> <HELM_HOME> --namespace <NAMESPACE>
-```
+ Helm version 2
+
+    ```
+    helm install --name <RELEASE_NAME> <HELM_HOME> --namespace <NAMESPACE>
+    ```
+
+ Helm version 3
+ 
+    ```
+    helm install <RELEASE_NAME> <HELM_HOME> --namespace <NAMESPACE>
+    ```
 
 `NAMESPACE` should be the Kubernetes Namespace in which the resources are deployed
 
@@ -155,16 +164,16 @@ kubectl get ing -n <NAMESPACE>
 ```
 
 ```
-NAME                                                HOSTS                ADDRESS        PORTS     AGE
-<RELEASE_NAME>-micro-integrator-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
-<RELEASE_NAME>-micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
+NAME                                                  HOSTS                      ADDRESS        PORTS     AGE
+<RELEASE_NAME>-micro-integrator-service-ingress       mi.wso2.com                <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-micro-integrator-management-ingress    management.mi.wso2.com     <EXTERNAL-IP>  80, 443   3m
 ```
 
 b. Add the above host as an entry in /etc/hosts file as follows:
 
 ```
 <EXTERNAL-IP>	mi.wso2.com 
-<EXTERNAL-IP>	mi.mgt.wso2.com 
+<EXTERNAL-IP>	management.mi.wso2.com 
 ```
 
 ## Enabling Centralized Logging

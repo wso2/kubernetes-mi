@@ -26,7 +26,11 @@ spec:
     - port: 8290
       targetPort: 8290
       protocol: TCP
-      name: http
+      name: pass-through-http
+    - port: 8253
+      targetPort: 8253
+      protocol: TCP
+      name: pass-through-https
     - port: 9201
       targetPort: 9201
       protocol: TCP
