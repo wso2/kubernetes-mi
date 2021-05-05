@@ -124,17 +124,6 @@ If you do not have active WSO2 subscription do not change the parameters `wso2.d
 | `wso2.ingress.management.hostnname`                                                 | The Host name for the Micro integrator Management ingress                                 | management.mi.wso2.com                       |
 | `wso2.ingress.management.annotations`                                               | Annotations for the Micro Integrator Management Ingress                                   | Nginx ingress annotations                      |
 
-###### Centralized Logging Configurations
-
-| Parameter                                                                   | Description                                                                               | Default Value               |
-|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------|
-| `wso2.centralizedLogging.enabled`                                           | Enable Centralized logging for WSO2 components                                            | true                        |                                                                                         |                             |    
-| `wso2.centralizedLogging.logstash.imageTag`                                 | Logstash Sidecar container image tag                                                      | 7.2.0                       |  
-| `wso2.centralizedLogging.logstash.elasticsearch.host    `                   | Elasticsearch endpoint                                                                    | elastic                     |  
-| `wso2.centralizedLogging.logstash.elasticsearch.username`                   | Elasticsearch username                                                                    | elastic                     |  
-| `wso2.centralizedLogging.logstash.elasticsearch.password`                   | Elasticsearch password                                                                    | changeme                    |  
-
-
 ##### 3. Deploy WSO2 Micro Integrator.
 
  Helm version 2
@@ -174,36 +163,4 @@ b. Add the above host as an entry in /etc/hosts file as follows:
 ```
 <EXTERNAL-IP>	mi.wso2.com 
 <EXTERNAL-IP>	management.mi.wso2.com 
-```
-
-## Enabling Centralized Logging
-
-Centralized logging with Logstash and Elasticsearch is disabled by default. However, if it is required to be enabled, 
-the following steps should be followed.
-
-1. Set `centralizedLogging.enabled` to `true` in the [values.yaml](values.yaml) file.
-2. Add elasticsearch Helm repository to download sub-charts required for Centralized logging.
-```
-helm repo add elasticsearch https://helm.elastic.co
-```
-3. Create a requirements.yaml at <HELM_HOME> and add the following dependencies in the file.
-```
-dependencies:
-  - name: kibana
-    version: "7.2.1-0"
-    repository: "https://helm.elastic.co"
-    condition: wso2.centralizedLogging.enabled
-  - name: elasticsearch
-    version: "7.2.1-0"
-    repository: "https://helm.elastic.co"
-    condition: wso2.centralizedLogging.enabled
-
-```
-4. Add override configurations for Elasticsearch in the [values.yaml](values.yaml) file.
-```
-wso2:
-  ( ... )
-  
-elasticsearch:
-  clusterName: wso2-elasticsearch
 ```
