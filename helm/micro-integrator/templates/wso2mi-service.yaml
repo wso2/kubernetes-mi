@@ -26,7 +26,11 @@ spec:
     - port: 8290
       targetPort: 8290
       protocol: TCP
-      name: http
+      name: pass-through-http
+    - port: 8253
+      targetPort: 8253
+      protocol: TCP
+      name: pass-through-https
     - port: 9201
       targetPort: 9201
       protocol: TCP
@@ -35,7 +39,7 @@ spec:
       targetPort: 9164
       protocol: TCP
       name: management
-    {{- if .Values.wso2.deployment.wso2microIntegrator.synapseTest.enabled }}
+    {{- if .Values.wso2.deployment.mi.synapseTest.enabled }}
     - port: 9008
       targetPort: 9008
       protocol: TCP

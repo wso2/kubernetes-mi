@@ -31,16 +31,33 @@ deployment patterns are compatible with NGINX Ingress Controller Git release [`n
 ### Install Chart From [WSO2 Helm Chart Repository](https://hub.helm.sh/charts/wso2)
 
 ##### 1. Deploy Helm chart for WSO2 Micro Integrator deployment
-[Option 1] Deploy using Docker images from DockerHub.
 
-```
-helm install --name <RELEASE_NAME> wso2/micro-integrator --version 1.2.0-5 --namespace <NAMESPACE>
-```
+- **Helm v2**
 
-[Option 2] Deploy WSO2 Micro Integrator  using Docker images from WSO2 Private Docker Registry.
-```
-helm install --name <RELEASE_NAME> wso2/micro-integrator --version 1.2.0-5 --namespace <NAMESPACE> --set wso2.subscription.username=<SUBSCRIPTION_USERNAME> --set wso2.subscription.password=<SUBSCRIPTION_PASSWORD>
-```
+    [Option 1] Deploy using Docker images from DockerHub.
+    
+    ```
+    helm install --name <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE>
+    ```
+    
+    [Option 2] Deploy WSO2 Micro Integrator  using Docker images from WSO2 Private Docker Registry.
+    ```
+    helm install --name <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE> --set wso2.subscription.username=<SUBSCRIPTION_USERNAME> --set wso2.subscription.password=<SUBSCRIPTION_PASSWORD>
+    ```
+
+- **Helm v3**
+
+    [Option 1] Deploy using Docker images from DockerHub.
+    
+    ```
+    helm install <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE> --create-namespace
+    ```
+    
+    [Option 2] Deploy WSO2 Micro Integrator  using Docker images from WSO2 Private Docker Registry.
+    ```
+    helm install <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE> --set wso2.subscription.username=<SUBSCRIPTION_USERNAME> --set wso2.subscription.password=<SUBSCRIPTION_PASSWORD> --create-namespace
+    ```
+
 **Note:**
 
 * `NAMESPACE` should be the Kubernetes Namespace in which the resources are deployed.
@@ -58,17 +75,33 @@ kubectl get ing -n <NAMESPACE>
 ```
 
 ```
-NAME                                     HOSTS                ADDRESS        PORTS     AGE
-<RELEASE_NAME>-micro-integrator-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
-<RELEASE_NAME>-micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
+NAME                                                 HOSTS                      ADDRESS        PORTS     AGE
+<RELEASE_NAME>-micro-integrator-service-ingress      mi.wso2.com                <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-micro-integrator-management-ingress   management.mi.wso2.com     <EXTERNAL-IP>  80, 443   3m
 ```
 
 b. Add the above host as an entry in /etc/hosts file as follows:
 
 ```
 <EXTERNAL-IP>	mi.wso2.com 
-<EXTERNAL-IP>	mi.mgt.wso2.com 
+<EXTERNAL-IP>	management.mi.wso2.com 
 ```
+
+
+> **Note:** <br>
+From the above Helm commands, base image of a Micro Integrator is deployed (without any integration solution). To deploy your integration solution with the Helm charts follow the below steps. <br><br>
+>1. [Create an integration service using WSO2 Integration Studio](https://apim.docs.wso2.com/en/latest/integrate/integration-overview). Then [create a Docker image](https://apim.docs.wso2.com/en/latest/integrate/develop/create-docker-project/#creating-docker-exporter) and push it to your private or public Docker registry. <br><br>
+    - `INTEGRATION_IMAGE_REGISTRY` will refer to the Docker registry that created Docker image has been pushed <br>
+    - `INTEGRATION_IMAGE_NAME` will refer to the name of the created Docker image <br>
+    - `INTEGRATION_IMAGE_TAG` will refer to the tag of the created Docker image <br><br>
+>2. If your Docker registry is a private registry, [create an imagePullSecret](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/).<br><br>
+    - `IMAGE_PULL_SECRET` will refer to the created image pull secret <br><br>
+>3. Deploy the helm resource using following command.<br><br>
+>   ```
+>   helm install <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE> --set wso2.deployment.mi.dockerRegistry=<INTEGRATION_IMAGE_REGISTRY> --set wso2.deployment.mi.imageName=<INTEGRATION_IMAGE_NAME> --set wso2.deployment.mi.imageTag=<INTEGRATION_IMAGE_TAG> --set wso2.deployment.mi.imagePullSecrets=<IMAGE_PULL_SECRET>
+>   ```     
+
+
 ### Install Chart From Source
 >In the context of this document, <br>
 >* `KUBERNETES_HOME` will refer to a local copy of the [`wso2/kubernetes-mi`](https://github.com/wso2
@@ -98,47 +131,45 @@ b. Open the `<HELM_HOME>/values.yaml` and provide the following values.
 
 If you do not have active WSO2 subscription do not change the parameters `wso2.deployment.username`, `wso2.deployment.password`. 
 
-###### Centralized Logging Configurations
-
-| Parameter                                                                   | Description                                                                               | Default Value               |
-|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------|
-| `wso2.centralizedLogging.enabled`                                           | Enable Centralized logging for WSO2 components                                            | true                        |                                                                                         |                             |    
-| `wso2.centralizedLogging.logstash.imageTag`                                 | Logstash Sidecar container image tag                                                      | 7.2.0                       |  
-| `wso2.centralizedLogging.logstash.elasticsearch.host    `                   | Elasticsearch endpoint                                                                    | elastic                     |  
-| `wso2.centralizedLogging.logstash.elasticsearch.username`                   | Elasticsearch username                                                                    | elastic                     |  
-| `wso2.centralizedLogging.logstash.elasticsearch.password`                   | Elasticsearch password                                                                    | changeme                    |  
-
 ###### Micro Integrator Deployment Configurations
 
 | Parameter                                                                   | Description                                                                               | Default Value               |
 |-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------|
-| `wso2.deployment.wso2microIntegrator.dockerRegistry`                                | Docker registry of the micro-integrator image                                                 | ""                          |
-| `wso2.deployment.wso2microIntegrator.imageName`                                     | Image name for micro-integrator node                                                          | ""                          |
-| `wso2.deployment.wso2microIntegrator.imageTag`                                      | Image tag for micro-integrator node                                                           | ""                          |
-| `wso2.deployment.wso2microIntegrator.replicas`                                      | Number of replicas for micro-integrator node                                                  | 1                           |
-| `wso2.deployment.wso2microIntegrator.strategy.rollingUpdate.maxSurge`               | Refer to [doc](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deploymentstrategy-v1-apps) | 1                           |
-| `wso2.deployment.wso2microIntegrator.strategy.rollingUpdate.maxUnavailable`         | Refer to [doc](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deploymentstrategy-v1-apps) | 0                           |
-| `wso2.deployment.wso2microIntegrator.livenessProbe.initialDelaySeconds`             | Initial delay for the live-ness probe for micro-integrator node                               | 40                           |
-| `wso2.deployment.wso2microIntegrator.livenessProbe.periodSeconds`                   | Period of the live-ness probe for micro-integrator node                                       | 10                           |
-| `wso2.deployment.wso2microIntegrator.readinessProbe.initialDelaySeconds`            | Initial delay for the readiness probe for micro-integrator node                               | 40                           |
-| `wso2.deployment.wso2microIntegrator.readinessProbe.periodSeconds`                  | Period of the readiness probe for micro-integrator node                                       | 10                           |
-| `wso2.deployment.wso2microIntegrator.imagePullPolicy`                               | Refer to [doc](https://kubernetes.io/docs/concepts/containers/images#updating-images)     | Always                       |
-| `wso2.deployment.wso2microIntegrator.resources.requests.memory`                     | The minimum amount of memory that should be allocated for a Pod                           | 1Gi                          |
-| `wso2.deployment.wso2microIntegrator.resources.requests.cpu`                        | The minimum amount of CPU that should be allocated for a Pod                              | 2000m                        |
-| `wso2.deployment.wso2microIntegrator.resources.limits.memory`                       | The maximum amount of memory that should be allocated for a Pod                           | 2Gi                          |
-| `wso2.deployment.wso2microIntegrator.resources.limits.cpu`                          | The maximum amount of CPU that should be allocated for a Pod                              | 2000m                        |
-| `wso2.deployment.wso2microIntegrator.envs                `                          | The List of environment variables that should configured for a Pod                              | 2000m                        |
-| `wso2.deployment.wso2microIntegrator.synapseTest.enabled                `           | Enable Synapse testing                                                                 | false                        |
-| `wso2.ingress.services.hostname`                                                        | The Host name for the Micro integrator Services ingress                                   | mi.wso2.com                        |
-| `wso2.ingress.services.annotations`                                                 | Annotations for the Micro Integrator Services Ingress                                     | Nginx ingress annotations                      |
-| `wso2.ingress.mgt.hostnname`                                                             | The Host name for the Micro integrator Management ingress                                 | mi.mgt.wso2.com                       |
-| `wso2.ingress.mgt.annotations`                                                      | Annotations for the Micro Integrator Management Ingress                                   | Nginx ingress annotations                      |
+| `wso2.deployment.mi.dockerRegistry`                                | Docker registry of the micro-integrator image                                                 | ""                          |
+| `wso2.deployment.mi.imageName`                                     | Image name for micro-integrator node                                                          | ""                          |
+| `wso2.deployment.mi.imageTag`                                      | Image tag for micro-integrator node                                                           | ""                          |
+| `wso2.deployment.mi.replicas`                                      | Number of replicas for micro-integrator node                                                  | 1                           |
+| `wso2.deployment.mi.strategy.rollingUpdate.maxSurge`               | Refer to [doc](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deploymentstrategy-v1-apps) | 1                           |
+| `wso2.deployment.mi.strategy.rollingUpdate.maxUnavailable`         | Refer to [doc](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deploymentstrategy-v1-apps) | 0                           |
+| `wso2.deployment.mi.livenessProbe.initialDelaySeconds`             | Initial delay for the live-ness probe for micro-integrator node                               | 40                           |
+| `wso2.deployment.mi.livenessProbe.periodSeconds`                   | Period of the live-ness probe for micro-integrator node                                       | 10                           |
+| `wso2.deployment.mi.readinessProbe.initialDelaySeconds`            | Initial delay for the readiness probe for micro-integrator node                               | 40                           |
+| `wso2.deployment.mi.readinessProbe.periodSeconds`                  | Period of the readiness probe for micro-integrator node                                       | 10                           |
+| `wso2.deployment.mi.imagePullPolicy`                               | Refer to [doc](https://kubernetes.io/docs/concepts/containers/images#updating-images)     | Always                       |
+| `wso2.deployment.mi.resources.requests.memory`                     | The minimum amount of memory that should be allocated for a Pod                           | 1Gi                          |
+| `wso2.deployment.mi.resources.requests.cpu`                        | The minimum amount of CPU that should be allocated for a Pod                              | 2000m                        |
+| `wso2.deployment.mi.resources.limits.memory`                       | The maximum amount of memory that should be allocated for a Pod                           | 2Gi                          |
+| `wso2.deployment.mi.resources.limits.cpu`                          | The maximum amount of CPU that should be allocated for a Pod                              | 2000m                        |
+| `wso2.deployment.mi.envs                `                          | The List of environment variables that should configured for a Pod                              | 2000m                        |
+| `wso2.deployment.mi.synapseTest.enabled                `           | Enable Synapse testing                                                                 | false                        |
+| `wso2.ingress.services.hostname`                                   | The Host name for the Micro integrator Services ingress                                   | mi.wso2.com                        |
+| `wso2.ingress.services.annotations`                                | Annotations for the Micro Integrator Services Ingress                                     | Nginx ingress annotations                      |
+| `wso2.ingress.management.hostnname`                                | The Host name for the Micro integrator Management ingress                                 | management.mi.wso2.com                       |
+| `wso2.ingress.management.annotations`                              | Annotations for the Micro Integrator Management Ingress                                   | Nginx ingress annotations                      |
 
 ##### 3. Deploy WSO2 Micro Integrator.
 
-```
-helm install --name <RELEASE_NAME> <HELM_HOME> --namespace <NAMESPACE>
-```
+- **Helm v2**
+
+    ```
+    helm install --name <RELEASE_NAME> <HELM_HOME> --namespace <NAMESPACE>
+    ```
+
+- **Helm v3**
+ 
+    ```
+    helm install <RELEASE_NAME> <HELM_HOME> --namespace <NAMESPACE>
+    ```
 
 `NAMESPACE` should be the Kubernetes Namespace in which the resources are deployed
 
@@ -155,46 +186,14 @@ kubectl get ing -n <NAMESPACE>
 ```
 
 ```
-NAME                                                HOSTS                ADDRESS        PORTS     AGE
-<RELEASE_NAME>-micro-integrator-services      mi.wso2.com       <EXTERNAL-IP>  80, 443   3m
-<RELEASE_NAME>-micro-integrator-mgt           mi.mgt.wso2.com     <EXTERNAL-IP>  80, 443   3m
+NAME                                                  HOSTS                      ADDRESS        PORTS     AGE
+<RELEASE_NAME>-micro-integrator-service-ingress       mi.wso2.com                <EXTERNAL-IP>  80, 443   3m
+<RELEASE_NAME>-micro-integrator-management-ingress    management.mi.wso2.com     <EXTERNAL-IP>  80, 443   3m
 ```
 
 b. Add the above host as an entry in /etc/hosts file as follows:
 
 ```
 <EXTERNAL-IP>	mi.wso2.com 
-<EXTERNAL-IP>	mi.mgt.wso2.com 
-```
-
-## Enabling Centralized Logging
-
-Centralized logging with Logstash and Elasticsearch is disabled by default. However, if it is required to be enabled, 
-the following steps should be followed.
-
-1. Set `centralizedLogging.enabled` to `true` in the [values.yaml](values.yaml) file.
-2. Add elasticsearch Helm repository to download sub-charts required for Centralized logging.
-```
-helm repo add elasticsearch https://helm.elastic.co
-```
-3. Create a requirements.yaml at <HELM_HOME> and add the following dependencies in the file.
-```
-dependencies:
-  - name: kibana
-    version: "7.2.1-0"
-    repository: "https://helm.elastic.co"
-    condition: wso2.centralizedLogging.enabled
-  - name: elasticsearch
-    version: "7.2.1-0"
-    repository: "https://helm.elastic.co"
-    condition: wso2.centralizedLogging.enabled
-
-```
-4. Add override configurations for Elasticsearch in the [values.yaml](values.yaml) file.
-```
-wso2:
-  ( ... )
-  
-elasticsearch:
-  clusterName: wso2-elasticsearch
+<EXTERNAL-IP>	management.mi.wso2.com 
 ```

@@ -15,18 +15,18 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ include "micro-integrator.fullname" . }}-mgt
+  name: {{ include "micro-integrator.fullname" . }}-management-ingress
   namespace : {{ .Release.Namespace }}
-{{- if .Values.wso2.ingress.mgt.annotations }}
+{{- if .Values.wso2.ingress.management.annotations }}
   annotations:
-{{ toYaml .Values.wso2.ingress.mgt.annotations | indent 4 }}
+{{ toYaml .Values.wso2.ingress.management.annotations | indent 4 }}
 {{- end }}
 spec:
   tls:
     - hosts:
-        - {{ .Values.wso2.ingress.mgt.hostname  | quote }}
+        - {{ .Values.wso2.ingress.management.hostname  | quote }}
   rules:
-    - host: {{ .Values.wso2.ingress.mgt.hostname | quote }}
+    - host: {{ .Values.wso2.ingress.management.hostname | quote }}
       http:
         paths:
           - path: /

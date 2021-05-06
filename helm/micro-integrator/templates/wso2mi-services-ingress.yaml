@@ -15,7 +15,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ include "micro-integrator.fullname" . }}-services
+  name: {{ include "micro-integrator.fullname" . }}-service-ingress
   namespace : {{ .Release.Namespace }}
 {{- if .Values.wso2.ingress.services.annotations }}
   annotations:

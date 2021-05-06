@@ -18,11 +18,11 @@ wso2:
     username: ""
     password: ""
   deployment:
-    wso2microIntegrator:
+    mi:
       # If a custom image must be used, uncomment 'dockerRegistry' and provide its value.
-#      dockerRegistry: ""
+      # dockerRegistry: ""
       imageName: "wso2mi"
-      imageTag: "1.2.0"
+      imageTag: "4.0.0"
       # Number of deployment replicas
       replicas: 1
       strategy:
@@ -72,21 +72,10 @@ wso2:
         kubernetes.io/ingress.class: "nginx"
         nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     # Configure management ingress
-    mgt:
+    management:
       # Hostname for the Micro Integrator management endpoint.
-      hostname: "mi.mgt.wso2.com"
+      hostname: "management.mi.wso2.com"
       # Annotations for the Micro Integrator management Ingress.
       annotations:
         kubernetes.io/ingress.class: "nginx"
         nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-  # Configurations for the logstash container image and elasticsearch authorization credentials
-  # Centralized logging is disabled by default. If it is required to enable centralized logging, please follow the instructions
-  # provided in the documentation (https://github.com/wso2/kubernetes-mi/blob/master/helm/micro-integrator/README.md#enabling-centralized-logging)
-  centralizedLogging:
-    enabled: false
-    logstash:
-      imageTag: 7.2.0
-      elasticsearch:
-        host: wso2-elasticsearch-master
-        username: "elastic"
-        password: "changeme"
