@@ -168,7 +168,8 @@ If you do not have active WSO2 subscription do not change the parameters `wso2.d
 - **Helm v3**
  
     ```
-    helm install <RELEASE_NAME> <HELM_HOME> --namespace <NAMESPACE>
+    helm install <RELEASE_NAME> <HELM_HOME> --namespace <NAMESPACE> --create-namespace
+
     ```
 
 `NAMESPACE` should be the Kubernetes Namespace in which the resources are deployed
