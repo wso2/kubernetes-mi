@@ -15,7 +15,7 @@
 (and Tiller) and [Kubernetes client](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in order to run the 
 steps provided in the following quick start guide.<br><br>
 
-* An already setup [Kubernetes cluster](https://kubernetes.io/docs/setup/).<br><br>
+* An already setup [Kubernetes cluster](https://kubernetes.io/docs/setup/) ( v1.19+ ).<br><br>
 
 * Install [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/). Please note that Helm resources for WSO2 product
 deployment patterns are compatible with NGINX Ingress Controller Git release [`nginx-0.30.0`](https://github.com/kubernetes/ingress-nginx/releases/tag/nginx-0.30.0).
@@ -37,12 +37,12 @@ deployment patterns are compatible with NGINX Ingress Controller Git release [`n
     [Option 1] Deploy using Docker images from DockerHub.
     
     ```
-    helm install --name <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE>
+    helm install --name <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-2 --namespace <NAMESPACE>
     ```
     
     [Option 2] Deploy WSO2 Micro Integrator  using Docker images from WSO2 Private Docker Registry.
     ```
-    helm install --name <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE> --set wso2.subscription.username=<SUBSCRIPTION_USERNAME> --set wso2.subscription.password=<SUBSCRIPTION_PASSWORD>
+    helm install --name <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-2 --namespace <NAMESPACE> --set wso2.subscription.username=<SUBSCRIPTION_USERNAME> --set wso2.subscription.password=<SUBSCRIPTION_PASSWORD>
     ```
 
 - **Helm v3**
@@ -50,12 +50,12 @@ deployment patterns are compatible with NGINX Ingress Controller Git release [`n
     [Option 1] Deploy using Docker images from DockerHub.
     
     ```
-    helm install <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE> --create-namespace
+    helm install <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-2 --namespace <NAMESPACE> --create-namespace
     ```
     
     [Option 2] Deploy WSO2 Micro Integrator  using Docker images from WSO2 Private Docker Registry.
     ```
-    helm install <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE> --set wso2.subscription.username=<SUBSCRIPTION_USERNAME> --set wso2.subscription.password=<SUBSCRIPTION_PASSWORD> --create-namespace
+    helm install <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-2 --namespace <NAMESPACE> --set wso2.subscription.username=<SUBSCRIPTION_USERNAME> --set wso2.subscription.password=<SUBSCRIPTION_PASSWORD> --create-namespace
     ```
 
 **Note:**
@@ -98,7 +98,7 @@ From the above Helm commands, base image of a Micro Integrator is deployed (with
     - `IMAGE_PULL_SECRET` will refer to the created image pull secret <br><br>
 >3. Deploy the helm resource using following command.<br><br>
 >   ```
->   helm install <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-1 --namespace <NAMESPACE> --set wso2.deployment.mi.dockerRegistry=<INTEGRATION_IMAGE_REGISTRY> --set wso2.deployment.mi.imageName=<INTEGRATION_IMAGE_NAME> --set wso2.deployment.mi.imageTag=<INTEGRATION_IMAGE_TAG> --set wso2.deployment.mi.imagePullSecrets=<IMAGE_PULL_SECRET>
+>   helm install <RELEASE_NAME> wso2/micro-integrator --version 4.0.0-2 --namespace <NAMESPACE> --set wso2.deployment.mi.dockerRegistry=<INTEGRATION_IMAGE_REGISTRY> --set wso2.deployment.mi.imageName=<INTEGRATION_IMAGE_NAME> --set wso2.deployment.mi.imageTag=<INTEGRATION_IMAGE_TAG> --set wso2.deployment.mi.imagePullSecrets=<IMAGE_PULL_SECRET>
 >   ```     
 
 
