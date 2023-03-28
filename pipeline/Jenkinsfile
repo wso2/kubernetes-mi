@@ -1,0 +1,48 @@
+def cloneGitRepo(String version) {
+    sh """
+        #!/bin/bash
+        rm -rf kubernetes-mi
+        git clone https://github.com/wso2/kubernetes-mi
+        cd kubernetes-mi
+        git checkout tags/${version}
+    """
+}
+
+def pushChart(String chartPath, String helmParams) {
+    withCredentials([usernamePassword(credentialsId: 'HELM_ADMIN_CREDS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+        sh """
+            helm cm-push ${helmParams} ${chartPath} https://helm.wso2.com -u \${USERNAME} -p \${PASSWORD}
+        """
+    }
+}
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'GITHUB_RELEASE_VERSION', description: 'Enter the GitHub release tag', defaultValue: 'v4.2.0.1')
+        separator(name: 'charts', description: 'Select charts to be pushed')
+        booleanParam(name: 'MICRO_INTEGRATOR', description: 'Select if micro-integrator chart needs to be pushed', defaultValue: false)
+        separator(name: 'parameters', description: 'Select Helm parameters')
+        booleanParam(name: 'FORCE_PUSH', description: 'Select if charts need to be replaced', defaultValue: false)
+    }
+
+    stages {
+        stage('Run Script') {
+            steps {
+                script {
+                    cloneGitRepo(params.GITHUB_RELEASE_VERSION)
+
+                    def helmParams = ''
+                    if (params.FORCE_PUSH) {
+                        helmParams = '--force'
+                    }
+
+                    if (params['MICRO_INTEGRATOR']) {
+                        pushChart('helm/micro-integrator', helmParams)
+                    }
+                }
+            }
+        }
+    }
+}
