@@ -1,3 +1,9 @@
+## ⚠️ Note
+
+This repository is no longer maintained for WSO2 Micro Integrator version **4.3.0 and above**. For Helm charts related to the latest versions, please visit the repository [https://github.com/wso2/helm-mi](https://github.com/wso2/helm-mi).
+
+---
+
 # kubernetes-mi
 This project contains the Helm resources required to deploy WSO2 Micro Integrator in a Kubernetes environment
 
